@@ -47,7 +47,8 @@ function stringifyObject (prefix, indent, obj) {
   const inlineIndent = indent || ''
   inlineKeys.forEach(key => {
     var type = tomlType(obj[key])
-    if (type !== 'undefined' && type !== 'null') {
+    // if (type !== 'undefined' && type !== 'null') {
+    if (type !== 'undefined' ) {
       result.push(inlineIndent + stringifyKey(key) + ' = ' + stringifyAnyInline(obj[key], true))
     }
   })
@@ -113,6 +114,9 @@ function stringifyKey (key) {
 }
 
 function stringifyBasicString (str) {
+  if (str === null) {
+    return "null"
+  }
   return '"' + escapeString(str).replace(/"/g, '\\"') + '"'
 }
 
@@ -179,6 +183,8 @@ function stringifyInline (value, type) {
       return stringifyInlineArray(value.filter(_ => tomlType(_) !== 'null' && tomlType(_) !== 'undefined' && tomlType(_) !== 'nan'))
     case 'table':
       return stringifyInlineTable(value)
+    case 'null':
+      return stringifyBasicString(value);
     /* istanbul ignore next */
     default:
       throw typeError(type)
